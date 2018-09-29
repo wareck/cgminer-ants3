@@ -266,7 +266,8 @@ static inline int fsync (int fd)
 	DRIVER_ADD_COMMAND(knc) \
 	DRIVER_ADD_COMMAND(minion) \
 	DRIVER_ADD_COMMAND(sp10) \
-	DRIVER_ADD_COMMAND(sp30)
+	DRIVER_ADD_COMMAND(sp30) \
+	DRIVER_ADD_COMMAND(bitmain_soc)
 
 #define DRIVER_PARSE_COMMANDS(DRIVER_ADD_COMMAND) \
 	FPGA_PARSE_COMMANDS(DRIVER_ADD_COMMAND) \
@@ -1156,6 +1157,14 @@ extern void set_target(unsigned char *dest_target, double diff);
 bool submit_nonce2_nonce(struct thr_info *thr, struct pool *pool, struct pool *real_pool,
 			 uint32_t nonce2, uint32_t nonce, uint32_t ntime);
 #endif
+#ifdef USE_BITMAIN_SOC
+void get_work_by_nonce2(struct thr_info *thr,
+						struct work **work,
+						struct pool *pool,
+						struct pool *real_pool,
+						uint64_t nonce2,
+						uint32_t version);
+#endif
 extern int restart_wait(struct thr_info *thr, unsigned int mstime);
 
 extern void raise_cgminer(void);
@@ -1214,6 +1223,22 @@ extern double current_diff;
 extern uint64_t best_diff;
 extern struct timeval block_timeval;
 extern char *workpadding;
+
+#ifdef USE_BITMAIN_SOC
+extern char displayed_hash_rate[16];
+#define NONCE_BUFF 4096
+extern char nonce_num10_string[NONCE_BUFF];
+extern char nonce_num30_string[NONCE_BUFF];
+extern char nonce_num60_string[NONCE_BUFF];
+extern char g_miner_version[256];
+extern char g_miner_compiletime[256];
+extern char g_miner_type[256];
+extern double new_total_mhashes_done;
+extern double new_total_secs;
+extern time_t total_tv_start_sys;
+extern time_t total_tv_end_sys;
+extern void writeInitLogFile(char *logstr);
+#endif
 
 struct curl_ent {
 	CURL *curl;
@@ -1388,6 +1413,11 @@ struct pool {
 	uint32_t current_height;
 
 	struct timeval tv_lastwork;
+#ifdef USE_BITMAIN_SOC
+    bool support_vil;
+    int version_num;
+    int version[4];
+#endif
 };
 
 #define GETWORK_MODE_TESTPOOL 'T'
@@ -1465,6 +1495,9 @@ struct work {
 	struct timeval	tv_work_start;
 	struct timeval	tv_work_found;
 	char		getwork_mode;
+#ifdef USE_BITMAIN_SOC
+    int version;
+#endif
 };
 
 #ifdef USE_MODMINER
@@ -1557,7 +1590,7 @@ extern void pool_died(struct pool *pool);
 extern struct thread_q *tq_new(void);
 extern void tq_free(struct thread_q *tq);
 extern bool tq_push(struct thread_q *tq, void *data);
-extern void *tq_pop(struct thread_q *tq, const struct timespec *abstime);
+extern void *tq_pop(struct thread_q *tq);
 extern void tq_freeze(struct thread_q *tq);
 extern void tq_thaw(struct thread_q *tq);
 extern bool successful_connect;

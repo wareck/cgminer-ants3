@@ -14,7 +14,6 @@
 #include "driver-avalon7.h"
 #include "crc.h"
 #include "sha2.h"
-#include "libssplus.h"
 #include "hexdump.c"
 
 #define get_fan_pwm(v)	(AVA7_PWM_MAX - (v) * AVA7_PWM_MAX / 100)
