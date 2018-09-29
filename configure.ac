@@ -82,8 +82,6 @@ case $target in
     ;;
 esac
 
-#CFLAGS="$CFLAGS -Wimplicit-fallthrough=0"
-
 case $target in
   *-*-linux-gnu*)
     have_linux=true
@@ -618,6 +616,8 @@ else
 fi
 
 AM_CONDITIONAL([WANT_STATIC_JANSSON], [test x$djansson = xno])
+
+AC_CHECK_HEADERS([uthash.h])
 
 PKG_PROG_PKG_CONFIG()
 
