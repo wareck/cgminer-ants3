@@ -283,6 +283,7 @@ if test "x$bitfury" = xyes; then
 fi
 AM_CONDITIONAL([HAS_BITFURY], [test x$bitfury = xyes])
 
+
 bitfury16="no"
 
 AC_ARG_ENABLE([bitfury16],
